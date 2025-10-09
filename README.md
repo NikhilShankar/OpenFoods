@@ -16,7 +16,7 @@ This is a very simple application. Your recruiter should provide you with a uniq
 - Handle any server side errors or slow requests gracefully.
 - When done, send a zipped version of the project via email.
 
-We've provided a template Android project for Android candidates and template SwiftUI and UIKit projects for iOS candidates.  Please feel free to use these or create a brand new project utilising whatever technologies you think are most appropiate for the role that you are applying for.  
+We've provided a template Android project for Android candidates and template SwiftUI and UIKit projects for iOS candidates.  Please submit only one solution.  Please feel free to use these or create a brand new project utilising whatever technologies you think are most appropiate for the role that you are applying for.  Please disclose any AI use in your tech test. 
 
 ## Bonuses (in no particular order)
 
