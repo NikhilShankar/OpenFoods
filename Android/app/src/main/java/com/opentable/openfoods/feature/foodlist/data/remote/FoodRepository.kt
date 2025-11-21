@@ -21,6 +21,8 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
         ).flow
     }
 
+    //TODO Nikhil : The backend API wasnt returning success at any point.
+    //Hardcoded testing has been done. Still need to verify this with BE
     fun setLike(item: FoodItem): Flow<Boolean> {
         return flow {
             try {
@@ -34,6 +36,8 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
     }
 
 
+    //TODO Nikhil : The backend API wasnt returning success at any point.
+    //Hardcoded testing has been done. Still need to verify this with BE
     fun setUnLike(item: FoodItem): Flow<Boolean> {
         return flow {
             try {
