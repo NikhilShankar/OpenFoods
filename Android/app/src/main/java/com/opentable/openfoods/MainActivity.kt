@@ -1,6 +1,5 @@
 package com.opentable.openfoods
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -20,6 +19,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,11 +29,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.opentable.openfoods.feature.foodlist.ui.FoodListScreen
 import com.opentable.openfoods.feature.foodlist.ui.FoodListScreenVM
 import com.opentable.openfoods.ui.theme.OpenFoodsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +39,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Currently not supporting dark mode.
@@ -54,6 +53,7 @@ class MainActivity : ComponentActivity() {
                 Color.Transparent.toArgb()
             ) { false })
         setContent {
+            val windowSizeClass = calculateWindowSizeClass(this)
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
 
@@ -73,11 +73,15 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 ) { innerPadding ->
-                    FoodListScreenVM(modifier = Modifier.background(Color.White).fillMaxSize().padding(innerPadding)) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(it)
-                        }
-                    }
+                    FoodListScreenVM(
+                        modifier = Modifier.background(Color.White).fillMaxSize().padding(innerPadding),
+                        windowSizeClass = windowSizeClass,
+                        snackbarMessage = {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(it)
+                            }
+                        },
+                    )
                     //Greeting("Nikki")
                 }
             }

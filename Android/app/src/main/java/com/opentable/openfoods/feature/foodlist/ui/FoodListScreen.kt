@@ -3,6 +3,7 @@ package com.opentable.openfoods.feature.foodlist.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,19 +13,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,9 +37,12 @@ import com.opentable.openfoods.R
 
 
 @Composable
-fun FoodListScreenVM(modifier: Modifier,
-                     foodListViewModel: FoodListViewModel = hiltViewModel(),
-                     snackbarMessage: (String) -> Unit = {}) {
+fun FoodListScreenVM(
+    modifier: Modifier,
+    foodListViewModel: FoodListViewModel = hiltViewModel(),
+    windowSizeClass: WindowSizeClass,
+    snackbarMessage: (String) -> Unit = {},
+) {
 
     LaunchedEffect(foodListViewModel) {
         foodListViewModel.sideEffectFlow.collect {
@@ -58,33 +61,50 @@ fun FoodListScreenVM(modifier: Modifier,
     FoodListScreen(modifier,
         state = state.value,
         onEvent = { foodListViewModel.onEvent(it) },
-        snackbarMessage = snackbarMessage
+        snackbarMessage = snackbarMessage,
+        windowSizeClass = windowSizeClass
     )
 }
 
 @Composable
-fun FoodListScreen(modifier: Modifier,
-                   state: FoodListScreenState,
-                   onEvent: (FoodListEvent) -> Unit,
-                   snackbarMessage: (String) -> Unit = {}) {
+fun getGridColumns(windowSizeClass: WindowSizeClass): Int {
+    return when (windowSizeClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> 1  // Phone portrait
+        WindowWidthSizeClass.Medium -> 2   // Phone landscape / small tablet
+        WindowWidthSizeClass.Expanded -> 3 // Tablet / Desktop
+        else -> 1
+    }
+}
+
+@Composable
+fun FoodListScreen(
+    modifier: Modifier,
+    state: FoodListScreenState,
+    onEvent: (FoodListEvent) -> Unit,
+    snackbarMessage: (String) -> Unit = {},
+    windowSizeClass: WindowSizeClass
+) {
     val foodItems = state.foodPager.collectAsLazyPagingItems()
+    val columns = getGridColumns(windowSizeClass)
     Column(modifier, horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns), // Dynamic columns!
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(8.dp)
+        )  {
             if (foodItems.loadState.refresh == LoadState.Loading) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     ShowInitialLoading()
                 }
             } else if (foodItems.loadState.refresh is LoadState.Error) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) })  {
                     ShowFullscreenError()
                 }
             } else if (foodItems.itemCount == 0) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     ShowFullscreenNoItems()
                 }
             } else {
@@ -101,7 +121,7 @@ fun FoodListScreen(modifier: Modifier,
                 }
 
                 if (foodItems.loadState.append == LoadState.Loading) {
-                    item {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
                         CircularProgressIndicator(
                             modifier = Modifier
                                 .size(12.dp)
@@ -110,7 +130,7 @@ fun FoodListScreen(modifier: Modifier,
                         )
                     }
                 } else if (foodItems.loadState.append is LoadState.Error) {
-                    item {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
                         Row(horizontalArrangement = Arrangement.SpaceAround,
                             verticalAlignment = Alignment.CenterVertically) {
                             Text(

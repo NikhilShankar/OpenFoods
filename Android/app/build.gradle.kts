@@ -102,6 +102,9 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
 
+    //Grid - Impl - Window Size
+    implementation(libs.androidx.compose.material3.window.size.class1)
+
 
 
 }
