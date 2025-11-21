@@ -96,6 +96,8 @@ dependencies {
     //Paging3
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.runtime.ktx)
+    //Test-Paging3
+    testImplementation(libs.androidx.paging.testing)
 
     //Coil
     implementation(libs.coil.compose)

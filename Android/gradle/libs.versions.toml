@@ -23,6 +23,7 @@ mockk = "1.14.5"
 navigationCompose = "2.9.5"
 okhttp = "4.12.0"
 pagingCompose = "3.3.0"
+pagingTesting = "3.3.6"
 retrofit = "2.11.0"
 turbine = "1.2.1"
 
@@ -34,6 +35,7 @@ androidx-core-testing = { module = "androidx.arch.core:core-testing", version.re
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingCompose" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "pagingTesting" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "converterKotlinxSerialization" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

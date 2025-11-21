@@ -44,7 +44,7 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
                 val response = foodApiService.setUnlike(item.id)
                 emit(response.success)
             } catch (e: Exception) {
-                emit(true)
+                emit(false)
             }
         }
     }
