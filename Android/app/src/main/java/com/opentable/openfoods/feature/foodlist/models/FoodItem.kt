@@ -18,6 +18,7 @@ data class FoodItem(
     val lastUpdatedDate: String?
 ) : Parcelable
 
+@Serializable
 data class FoodItemDto(
     val id: Int? = null,
     val name: String? = null,

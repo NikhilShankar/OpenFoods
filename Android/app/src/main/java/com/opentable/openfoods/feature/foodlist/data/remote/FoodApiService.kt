@@ -11,12 +11,12 @@ import retrofit2.http.Path
 interface FoodApiService {
 
     @GET("{page}")
-    fun getFoodItems(@Path("page") page: Int): Flow<FoodApiResponse>
+    suspend fun getFoodItems(@Path("page") page: Int): FoodApiResponse
 
     @POST("{foodId}/like")
-    fun setLike(@Path("foodId") foodId: Int): Flow<Any>
+    suspend fun setLike(@Path("foodId") foodId: Int): Any
 
     @POST("{foodId}/unlike")
-    fun setUnlike(@Path("foodId") foodId: Int): Flow<Any>
+    suspend fun setUnlike(@Path("foodId") foodId: Int): Any
 
 }

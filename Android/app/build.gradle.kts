@@ -93,5 +93,9 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.androidx.core.testing)
 
+    //Paging3
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime.ktx)
+
 
 }
