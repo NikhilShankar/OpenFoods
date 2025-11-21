@@ -101,7 +101,9 @@ fun FoodListScreen(
                 }
             } else if (foodItems.loadState.refresh is LoadState.Error) {
                 item(span = { GridItemSpan(maxLineSpan) })  {
-                    ShowFullscreenError()
+                    ShowFullscreenError() {
+                        foodItems.retry()
+                    }
                 }
             } else if (foodItems.itemCount == 0) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
@@ -175,7 +177,7 @@ fun ShowInitialLoading() {
 }
 
 @Composable
-fun ShowFullscreenError() {
+fun ShowFullscreenError(onRetry: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Spacer(modifier = Modifier.size(16.dp))
@@ -185,7 +187,9 @@ fun ShowFullscreenError() {
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.size(16.dp))
-        Text(stringResource(R.string.food_list_screen_error_title), modifier = Modifier.padding(48.dp), fontSize = 24.sp, fontWeight = FontWeight.Medium)
+        Text(stringResource(R.string.food_list_screen_error_title), modifier = Modifier.padding(48.dp).clickable{
+            onRetry.invoke()
+        }, fontSize = 24.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.size(16.dp))
     }
 }

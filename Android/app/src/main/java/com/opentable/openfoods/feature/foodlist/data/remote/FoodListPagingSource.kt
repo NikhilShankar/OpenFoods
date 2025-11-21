@@ -19,6 +19,7 @@ class FoodListPagingSource (
             if(pageSize == null) {
                 pageSize = response.foods.size
             }
+            //TODO Testing code. Remove after polishing gridlist UI
 //            delay(5000)
 //            if((System.currentTimeMillis()%2).toInt() == 0) throw Exception("Testing")
             val totalPages = (response.totalCount + (pageSize ?: 10) - 1) / (pageSize ?: 10)
