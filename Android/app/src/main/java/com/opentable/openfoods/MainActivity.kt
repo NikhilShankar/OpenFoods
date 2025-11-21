@@ -3,8 +3,10 @@ package com.opentable.openfoods
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
@@ -19,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import com.opentable.openfoods.feature.foodlist.ui.FoodListScreen
 import com.opentable.openfoods.feature.foodlist.ui.FoodListScreenVM
@@ -30,7 +34,16 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //Currently not supporting dark mode.
+        //Always falling to light mode wth dark icons in status and nav bar.
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.auto(
+            Color.Transparent.toArgb(), // Translucent status bar background
+            Color.Transparent.toArgb()
+        ) { false }, // isLight: true for dark icons/text
+            navigationBarStyle = SystemBarStyle.auto(
+                Color.Transparent.toArgb(), // Translucent nav bar background
+                Color.Transparent.toArgb()
+            ) { false })
         setContent {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
@@ -41,7 +54,7 @@ class MainActivity : ComponentActivity() {
                 ).windowInsetsPadding(WindowInsets.navigationBars),
                     snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { innerPadding ->
-                    FoodListScreenVM(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                    FoodListScreenVM(modifier = Modifier.background(Color.White).fillMaxSize().padding(innerPadding)) {
                         scope.launch {
                             snackbarHostState.showSnackbar(it)
                         }

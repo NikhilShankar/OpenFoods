@@ -1,6 +1,7 @@
 package com.opentable.openfoods.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -19,21 +20,21 @@ val CustomFontFamily = FontFamily(
 // Extension function to apply font family to all styles
 fun Typography.withFontFamily(fontFamily: FontFamily): Typography {
     return this.copy(
-        displayLarge = this.displayLarge.copy(fontFamily = fontFamily),
-        displayMedium = this.displayMedium.copy(fontFamily = fontFamily),
-        displaySmall = this.displaySmall.copy(fontFamily = fontFamily),
-        headlineLarge = this.headlineLarge.copy(fontFamily = fontFamily),
-        headlineMedium = this.headlineMedium.copy(fontFamily = fontFamily),
-        headlineSmall = this.headlineSmall.copy(fontFamily = fontFamily),
-        titleLarge = this.titleLarge.copy(fontFamily = fontFamily),
-        titleMedium = this.titleMedium.copy(fontFamily = fontFamily),
-        titleSmall = this.titleSmall.copy(fontFamily = fontFamily),
-        bodyLarge = this.bodyLarge.copy(fontFamily = fontFamily),
-        bodyMedium = this.bodyMedium.copy(fontFamily = fontFamily),
-        bodySmall = this.bodySmall.copy(fontFamily = fontFamily),
-        labelLarge = this.labelLarge.copy(fontFamily = fontFamily),
-        labelMedium = this.labelMedium.copy(fontFamily = fontFamily),
-        labelSmall = this.labelSmall.copy(fontFamily = fontFamily),
+        displayLarge = this.displayLarge.copy(fontFamily = fontFamily, color = Color.Black),
+        displayMedium = this.displayMedium.copy(fontFamily = fontFamily, color = Color.Black),
+        displaySmall = this.displaySmall.copy(fontFamily = fontFamily, color = Color.Black),
+        headlineLarge = this.headlineLarge.copy(fontFamily = fontFamily, color = Color.Black),
+        headlineMedium = this.headlineMedium.copy(fontFamily = fontFamily, color = Color.Black),
+        headlineSmall = this.headlineSmall.copy(fontFamily = fontFamily, color = Color.Black),
+        titleLarge = this.titleLarge.copy(fontFamily = fontFamily, color = Color.Black),
+        titleMedium = this.titleMedium.copy(fontFamily = fontFamily, color = Color.Black),
+        titleSmall = this.titleSmall.copy(fontFamily = fontFamily, color = Color.Black),
+        bodyLarge = this.bodyLarge.copy(fontFamily = fontFamily, color = Color.Black),
+        bodyMedium = this.bodyMedium.copy(fontFamily = fontFamily, color = Color.Black),
+        bodySmall = this.bodySmall.copy(fontFamily = fontFamily, color = Color.Black),
+        labelLarge = this.labelLarge.copy(fontFamily = fontFamily, color = Color.Black),
+        labelMedium = this.labelMedium.copy(fontFamily = fontFamily, color = Color.Black),
+        labelSmall = this.labelSmall.copy(fontFamily = fontFamily, color = Color.Black),
     )
 }
 
