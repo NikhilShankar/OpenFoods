@@ -1,5 +1,6 @@
 package com.opentable.openfoods.feature.foodlist.data.remote
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -10,6 +11,9 @@ import javax.inject.Inject
 
 class FoodRepository @Inject constructor(private val foodApiService: FoodApiService) {
 
+    companion object {
+        const val TAG = "FoodRepository"
+    }
     fun getFoodPager(): Flow<PagingData<FoodItem>> {
         return Pager(
             config = PagingConfig(pageSize = 10, initialLoadSize = 10),
@@ -21,8 +25,9 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
         return flow {
             try {
                 val response = foodApiService.setLike(item.id)
-                emit(true)
+                emit(response.success)
             } catch (e: Exception) {
+                Log.i(TAG, "setLike: ${e.message}")
                 emit(false)
             }
         }
@@ -33,7 +38,7 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
         return flow {
             try {
                 val response = foodApiService.setUnlike(item.id)
-                emit(true)
+                emit(response.success)
             } catch (e: Exception) {
                 emit(false)
             }

@@ -12,14 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.opentable.openfoods.feature.foodlist.ui.FoodListScreen
 import com.opentable.openfoods.feature.foodlist.ui.FoodListScreenVM
 import com.opentable.openfoods.ui.theme.OpenFoodsTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -27,11 +32,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val snackbarHostState = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
+
             OpenFoodsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize().windowInsetsPadding(
                     WindowInsets.statusBars
-                ).windowInsetsPadding(WindowInsets.navigationBars)) { innerPadding ->
-                    FoodListScreenVM(modifier = Modifier.padding(innerPadding))
+                ).windowInsetsPadding(WindowInsets.navigationBars),
+                    snackbarHost = { SnackbarHost(snackbarHostState) }
+                ) { innerPadding ->
+                    FoodListScreenVM(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(it)
+                        }
+                    }
                     //Greeting("Nikki")
                 }
             }
