@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">OpenFoods</string>
+
+    <!-- Food List Screen -->
+    <string name="food_list_screen_title">Open Food</string>
+    <string name="food_list_screen_loading_message">Yummy things taking a little time to load. :) !</string>
+    <string name="food_list_screen_error_title">Something is not right !</string>
+    <string name="food_list_screen_empty_message">Sorry there are no items here. \n Maybe its a good time to book a table in OpenTable ;) !</string>
+    <string name="food_list_screen_append_error_message">Sorry ! We spilled some sauce! Click to retry !</string>
 </resources>

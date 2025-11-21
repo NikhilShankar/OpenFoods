@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.opentable.openfoods.R
 
 
 @Composable
@@ -112,7 +114,7 @@ fun FoodListScreen(modifier: Modifier,
                         Row(horizontalArrangement = Arrangement.SpaceAround,
                             verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                "Sorry ! We spilled some sauce! Click to retry !",
+                                stringResource(R.string.food_list_screen_append_error_message),
                                 modifier = Modifier.padding(horizontal = 32.dp)
                                     .padding(bottom = 24.dp, top = 24.dp).clickable {
                                         foodItems.retry()
@@ -134,12 +136,12 @@ fun ShowInitialLoading() {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Spacer(modifier = Modifier.size(16.dp))
-        Text("Open Food",
+        Text(stringResource(R.string.food_list_screen_title),
             modifier = Modifier.padding(48.dp),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.size(16.dp))
-        Text("Yummy things taking a little time to load. :) !",
+        Text(stringResource(R.string.food_list_screen_loading_message),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(48.dp),
             fontSize = 24.sp, fontWeight = FontWeight.Medium)
@@ -157,13 +159,13 @@ fun ShowFullscreenError() {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Spacer(modifier = Modifier.size(16.dp))
-        Text("Open Food",
+        Text(stringResource(R.string.food_list_screen_title),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(48.dp),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.size(16.dp))
-        Text("Something is not right !", modifier = Modifier.padding(48.dp), fontSize = 24.sp, fontWeight = FontWeight.Medium)
+        Text(stringResource(R.string.food_list_screen_error_title), modifier = Modifier.padding(48.dp), fontSize = 24.sp, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.size(16.dp))
     }
 }
@@ -174,10 +176,10 @@ fun ShowFullscreenNoItems() {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Spacer(modifier = Modifier.size(16.dp))
-        Text("Open Food",
+        Text(stringResource(R.string.food_list_screen_title),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(48.dp), fontSize = 32.sp, fontWeight = FontWeight.Medium)
-        Text("Sorry there are no items here. \n Maybe its a good time to book a table in OpenTable ;) !",
+        Text(stringResource(R.string.food_list_screen_empty_message),
             modifier = Modifier.padding(48.dp),
             textAlign = TextAlign.Center,
             fontSize = 24.sp, fontWeight = FontWeight.Medium)
