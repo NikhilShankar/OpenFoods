@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.opentable.openfoods.feature.foodlist.models.FoodItem
 import com.opentable.openfoods.feature.foodlist.models.toDomain
+import kotlinx.coroutines.delay
 
 class FoodListPagingSource (
     private val apiService: FoodApiService
@@ -18,6 +19,8 @@ class FoodListPagingSource (
             if(pageSize == null) {
                 pageSize = response.foods.size
             }
+//            delay(5000)
+//            if((System.currentTimeMillis()%2).toInt() == 0) throw Exception("Testing")
             val totalPages = (response.totalCount + (pageSize ?: 10) - 1) / (pageSize ?: 10)
             LoadResult.Page(
                 data = response.foods.mapNotNull { it.toDomain() },
