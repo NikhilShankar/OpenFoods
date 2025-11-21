@@ -11,6 +11,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -53,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.opentable.openfoods.R
 import com.opentable.openfoods.feature.foodlist.models.FoodItem
 import com.opentable.openfoods.ui.theme.LikePink
@@ -126,12 +130,15 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
                         .build(),
 
                     placeholder = painterResource(R.drawable.food_placeholder),
-                    //error = painterResource(R.drawable.ic_launcher_foreground), // temporary
+                    error = painterResource(R.drawable.food_placeholder), // temporary
                     contentDescription = "Description"
                 )
 
 
+
+
             }
+
             Column(
                 modifier = Modifier
                     .background(Color.Transparent)
@@ -141,7 +148,55 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(item.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+
+                    Column(modifier = Modifier.wrapContentWidth().weight(1f, fill = false),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Top) {
+                        Text(
+                            item.name, fontSize = 24.sp, fontWeight = FontWeight.Bold
+                        ) // Required so that the icon doesn't get squished out
+                        if(item.lastUpdatedDate != null) {
+                            Text(item.lastUpdatedDate, fontSize = 12.sp, fontWeight = FontWeight.Thin, color = Color.Black.copy(alpha = 0.75f))
+                        }
+                    }
+                    //We are relying on flagcdn api for getting the flag images.
+                    //Ideally we should start hosting them or we should add it as part of the apk
+                    item.countryOfOrigin?.let { countryCode ->
+                        AsyncImage(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(24.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.Gray,
+                                    shape = CircleShape // Match the CircleCropTransformation
+                                ),
+
+                            contentScale = ContentScale.Crop,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://flagcdn.com/w160/${countryCode.lowercase()}.png")
+                                .crossfade(true)
+                                .listener(
+                                    onError = { request, result ->
+                                        Log.e("CoilError", "Failed to load: ${item.photoUrl}")
+                                        Log.e("CoilError", "Error: ${result.throwable.message}")
+                                    },
+                                    onSuccess = { request, result ->
+                                        Log.d("CoilSuccess", "Loaded: ${item.photoUrl}")
+                                    }
+                                )
+                                .transformations(CircleCropTransformation())
+                                .build(),
+
+                            //placeholder = painterResource(R.drawable.food_placeholder),
+                            //error = painterResource(R.drawable.ic_launcher_foreground), // temporary
+                            contentDescription = "Description"
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     item.description ?: "",
                     fontSize = 16.sp,
@@ -153,7 +208,6 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
                         )
                     ),
                 )
-                Text(item.countryOfOrigin ?: "", fontSize = 16.sp)
 
                 Row {
                     Spacer(modifier = Modifier.weight(1f))

@@ -59,11 +59,6 @@ fun FoodListScreen(modifier: Modifier,
                    snackbarMessage: (String) -> Unit = {}) {
     val foodItems = state.foodPager.collectAsLazyPagingItems()
     Column(modifier, horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
-        Text(
-            "Open Food",
-            textAlign = TextAlign.Start,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), fontSize = 32.sp, fontWeight = FontWeight.Medium
-        )
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
