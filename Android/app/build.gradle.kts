@@ -2,6 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    //kapt declaration for hilt
+    kotlin("kapt")
+    //plugin declaration for hilt version is mentioned in the root gradle file
+    id("dagger.hilt.android.plugin")
+    //kotlinx-serialization plugin for navigation
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -56,4 +63,34 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //Hilt & HiltViewModel
+    // Hilt
+    implementation(libs.hilt.android)
+    //Hilt annotation processor library version
+    kapt(libs.hilt.compiler)
+    // Hilt Navigation Compose
+    implementation(libs.androidx.hilt.navigation.compose)
+    // ViewModels
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    //Retrofit
+    implementation(libs.retrofit) // Or the latest stable version
+    implementation(libs.kotlinx.serialization.json) // Or the latest stable version
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.converter.kotlinx.serialization)
+
+    //Compose Navigation
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material3)
+
+    // Testing dependencies
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.androidx.core.testing)
+
+
 }
