@@ -71,7 +71,7 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
         label = "cardColorAnimation"
     )
     val favIconColor = animateColorAsState(
-        targetValue = if (item.isLiked) LikePink else Color.Black.copy(alpha = 0.33f),
+        targetValue = if (item.isLiked) LikePink else Color.Black,
         animationSpec = tween(durationMillis = 1000),
         label = "cardColorAnimation"
     )
@@ -107,6 +107,7 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(imageHeight)) {
+
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -134,9 +135,6 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
                     contentDescription = "Description"
                 )
 
-
-
-
             }
 
             Column(
@@ -150,50 +148,73 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
             ) {
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
 
-                    Column(modifier = Modifier.wrapContentWidth().weight(1f, fill = false),
+                    Column(
+                        modifier = Modifier.wrapContentWidth().weight(1f, fill = false),
                         horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Top) {
+                        verticalArrangement = Arrangement.Top
+                    ) {
                         Text(
                             item.name, fontSize = 24.sp, fontWeight = FontWeight.Bold
                         ) // Required so that the icon doesn't get squished out
-                        if(item.lastUpdatedDate != null) {
-                            Text(item.lastUpdatedDate, fontSize = 12.sp, fontWeight = FontWeight.Thin, color = Color.Black.copy(alpha = 0.75f))
+                        if (item.lastUpdatedDate != null) {
+                            Text(
+                                item.lastUpdatedDate,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Thin,
+                                color = Color.Black.copy(alpha = 0.75f)
+                            )
                         }
                     }
                     //We are relying on flagcdn api for getting the flag images.
                     //Ideally we should start hosting them or we should add it as part of the apk
-                    item.countryOfOrigin?.let { countryCode ->
-                        AsyncImage(
+                    Row(modifier = Modifier.wrapContentWidth(), horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        item.countryOfOrigin?.let { countryCode ->
+                            AsyncImage(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .size(28.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Gray,
+                                        shape = CircleShape // Match the CircleCropTransformation
+                                    ),
+
+                                contentScale = ContentScale.Crop,
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data("https://flagcdn.com/w160/${countryCode.lowercase()}.png")
+                                    .crossfade(true)
+                                    .listener(
+                                        onError = { request, result ->
+                                            Log.e("CoilError", "Failed to load: ${item.photoUrl}")
+                                            Log.e("CoilError", "Error: ${result.throwable.message}")
+                                        },
+                                        onSuccess = { request, result ->
+                                            Log.d("CoilSuccess", "Loaded: ${item.photoUrl}")
+                                        }
+                                    )
+                                    .transformations(CircleCropTransformation())
+                                    .build(),
+
+                                //placeholder = painterResource(R.drawable.food_placeholder),
+                                //error = painterResource(R.drawable.ic_launcher_foreground), // temporary
+                                contentDescription = "Description"
+                            )
+                        }
+
+                        Icon(
                             modifier = Modifier
-                                .padding(16.dp)
-                                .size(24.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.Gray,
-                                    shape = CircleShape // Match the CircleCropTransformation
-                                ),
-
-                            contentScale = ContentScale.Crop,
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://flagcdn.com/w160/${countryCode.lowercase()}.png")
-                                .crossfade(true)
-                                .listener(
-                                    onError = { request, result ->
-                                        Log.e("CoilError", "Failed to load: ${item.photoUrl}")
-                                        Log.e("CoilError", "Error: ${result.throwable.message}")
-                                    },
-                                    onSuccess = { request, result ->
-                                        Log.d("CoilSuccess", "Loaded: ${item.photoUrl}")
-                                    }
-                                )
-                                .transformations(CircleCropTransformation())
-                                .build(),
-
-                            //placeholder = painterResource(R.drawable.food_placeholder),
-                            //error = painterResource(R.drawable.ic_launcher_foreground), // temporary
-                            contentDescription = "Description"
+                                .size(48.dp)
+                                .padding(8.dp)
+                                .clickable {
+                                    onFavClick.invoke(item)
+                                },
+                            imageVector = if (item.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Rating",
+                            tint = favIconColor.value
                         )
                     }
+
                 }
 
                 Spacer(modifier = Modifier.size(8.dp))
@@ -209,19 +230,7 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
                     ),
                 )
 
-                Row {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clickable {
-                                onFavClick.invoke(item)
-                            },
-                        imageVector = if (item.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Rating",
-                        tint = favIconColor.value
-                    )
-                }
+
             }
         }
     }
