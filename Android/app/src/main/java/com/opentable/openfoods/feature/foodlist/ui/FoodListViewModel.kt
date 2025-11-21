@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,12 +40,8 @@ class FoodListViewModel @Inject constructor(val foodRepo: FoodRepository): ViewM
         MutableStateFlow(FoodListScreenState(foodPager = foodPager))
     val foodListState = _foodListState.asStateFlow()
 
-    // We dont want the network api for like or unlike getting called multiple times
-    //in case user clicks on it multiple times randomly. Debounce of 400ms is introduced
-    //to handle this. But this has to be per item. If user clicks on like on 2 items
-    //within 400ms then we need to avoid debouncing. Hence the map which has id as key and and job
-    //it has as value so that we can cancel the previous one if user clicks within 400ms.
-    private val pendingJobs = mutableMapOf<Int, Job>()
+    // Track items that are currently processing
+    private val processingItems = MutableStateFlow<Set<Int>>(emptySet())
 
 
     //Side Effect for sending snackbar notif on like or unlike failure
@@ -55,42 +52,43 @@ class FoodListViewModel @Inject constructor(val foodRepo: FoodRepository): ViewM
     fun onEvent(event: FoodListEvent) {
         when(event) {
             is FoodListEvent.OnLike -> {
-                handleUiUpdate(event.foodItem, isLike = true)
-                handleDebouncedUpdateRemote(event.foodItem, isLike = true)
+                // Ignore if already processing
+                if (processingItems.value.contains(event.foodItem.id)) return
+                handleLikeUnlike(event.foodItem, isLike = true)
             }
             is FoodListEvent.OnUnlike -> {
-                handleUiUpdate(event.foodItem, false)
-                handleDebouncedUpdateRemote(event.foodItem, isLike = false)
+                // Ignore if already processing
+                if (processingItems.value.contains(event.foodItem.id)) return
+                handleLikeUnlike(event.foodItem, isLike = false)
             }
         }
     }
 
-    private fun handleUiUpdate(item: FoodItem, isLike: Boolean) {
-        optimisticLikeState.value = optimisticLikeState.value + (item.id to isLike)
-    }
+    private fun handleLikeUnlike(item: FoodItem, isLike: Boolean) {
+        // Mark as processing
+        processingItems.value = processingItems.value + item.id
 
-    private fun handleDebouncedUpdateRemote(item: FoodItem, isLike: Boolean) {
-        pendingJobs[item.id]?.cancel()
-        pendingJobs[item.id] = viewModelScope.launch {
-            kotlinx.coroutines.delay(400)
-            if (isLike) {
-                foodRepo.setLike(item).collect { result ->
-                    //Handling Failure case
-                    if(!result) {
-                        handleUiUpdate(item, false)
-                        _sideEffectFlow.emit(FoodListSideEffect.OnLikeUnlikeFailure("Couldn't like ${item.name}. Please try again !"))
-                    }
-                }
+        // Optimistic UI update
+        optimisticLikeState.value = optimisticLikeState.value + (item.id to isLike)
+
+        viewModelScope.launch {
+            val success = if (isLike) {
+                foodRepo.setLike(item).firstOrNull() ?: false
             } else {
-                foodRepo.setUnLike(item).collect { result ->
-                    //Handling Failure
-                    if(!result) {
-                        handleUiUpdate(item, true)
-                        _sideEffectFlow.emit(FoodListSideEffect.OnLikeUnlikeFailure("Couldn't unlike ${item.name}. Please try again !"))
-                    }
-                }
+                foodRepo.setUnLike(item).firstOrNull() ?: false
             }
-            pendingJobs.remove(item.id)
+
+            if (!success) {
+                // Revert on failure
+                optimisticLikeState.value = optimisticLikeState.value + (item.id to !isLike)
+                _sideEffectFlow.emit(
+                    FoodListSideEffect.OnLikeUnlikeFailure(
+                        "Couldn't ${if (isLike) "like" else "unlike"} ${item.name}. Please try again!"
+                    )
+                )
+            }
+            // Remove from processing
+            processingItems.value = processingItems.value - item.id
         }
     }
 

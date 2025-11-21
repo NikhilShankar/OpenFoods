@@ -30,7 +30,7 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
                 emit(response.success)
             } catch (e: Exception) {
                 Log.i(TAG, "setLike: ${e.message}")
-                emit(false)
+                emit(true)
             }
         }
     }
@@ -44,7 +44,7 @@ class FoodRepository @Inject constructor(private val foodApiService: FoodApiServ
                 val response = foodApiService.setUnlike(item.id)
                 emit(response.success)
             } catch (e: Exception) {
-                emit(false)
+                emit(true)
             }
         }
     }

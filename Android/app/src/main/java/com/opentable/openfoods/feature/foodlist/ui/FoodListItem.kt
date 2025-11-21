@@ -38,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -99,6 +100,7 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors().copy(containerColor = Color.White)
         ) {
+
             val imageHeight by animateDpAsState(
                 targetValue = if (!clicked.value) 128.dp else 300.dp, // Set explicit expanded height
                 animationSpec = tween(500, easing = EaseInOut),
@@ -201,13 +203,17 @@ fun FoodItemCard(item: FoodItem, onFavClick: (FoodItem) -> Unit = {}) {
                                 contentDescription = "Description"
                             )
                         }
-
+                        val lastClickTime = remember { mutableLongStateOf(0L) }
                         Icon(
                             modifier = Modifier
                                 .size(48.dp)
                                 .padding(8.dp)
                                 .clickable {
-                                    onFavClick.invoke(item)
+                                    val currentTime = System.currentTimeMillis()
+                                    if (currentTime - lastClickTime.longValue > 1000L) {
+                                        lastClickTime.longValue = currentTime
+                                        onFavClick.invoke(item)
+                                    }
                                 },
                             imageVector = if (item.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Rating",
