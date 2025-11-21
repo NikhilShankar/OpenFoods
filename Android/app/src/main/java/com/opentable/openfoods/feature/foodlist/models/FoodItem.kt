@@ -23,7 +23,7 @@ data class FoodItemDto(
     val id: Int? = null,
     val name: String? = null,
     val isLiked: Boolean = false,
-    val photoUrl: String? = null,
+    val photoURL: String? = null,
     val description: String? = null,
     val countryOfOrigin: String? = null,
     val lastUpdatedDate: String? = null
@@ -35,7 +35,7 @@ fun FoodItemDto.toDomain(): FoodItem? {
         id = id,
         name = name,
         isLiked = isLiked,
-        photoUrl = photoUrl,
+        photoUrl = photoURL,
         description = description,
         countryOfOrigin = countryOfOrigin,
         lastUpdatedDate = lastUpdatedDate
